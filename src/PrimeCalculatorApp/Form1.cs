@@ -6,6 +6,8 @@ public partial class Form1 : Form
 {
     private Thread? _thread1;
     private Thread? _thread2;
+    private volatile bool _cancelThread1;
+    private volatile bool _cancelThread2;
 
     public Form1()
     {
@@ -23,8 +25,10 @@ public partial class Form1 : Form
 
         listBox1.Items.Clear();
         button1.Enabled = false;
+        _cancelThread1 = false;
 
-        _thread1 = new Thread(() => CalculatePrimes(maxNumber, listBox1, button1));
+        _thread1 = new Thread(() => CalculatePrimes(maxNumber, listBox1, button1, 1));
+        _thread1.IsBackground = true; // Form kapandýðýnda thread otomatik sonlansýn
         _thread1.Start();
     }
 
@@ -39,34 +43,121 @@ public partial class Form1 : Form
 
         listBox2.Items.Clear();
         button2.Enabled = false;
+        _cancelThread2 = false;
 
-        _thread2 = new Thread(() => CalculatePrimes(maxNumber, listBox2, button2));
+        _thread2 = new Thread(() => CalculatePrimes(maxNumber, listBox2, button2, 2));
+        _thread2.IsBackground = true; // Form kapandýðýnda thread otomatik sonlansýn
         _thread2.Start();
     }
 
-    private void CalculatePrimes(int maxNumber, ListBox targetListBox, Button targetButton)
+    private void CalculatePrimes(int maxNumber, ListBox targetListBox, Button targetButton, int threadNumber)
     {
-        var primes = PrimeCalculator.Logic.PrimeCalculator.GetPrimesUpTo(maxNumber);
-
-        foreach (var prime in primes)
+        var primes = new List<int>();
+        const int batchSize = 100; // Her 100 asal sayýda bir UI'ý güncelle
+        const int useFastAlgorithmThreshold = 10000; // 10,000'den büyük sayýlarda hýzlý algoritma kullan
+        
+        // Ýlgili cancel flag'i belirle
+        ref bool cancelFlag = ref (threadNumber == 1 ? ref _cancelThread1 : ref _cancelThread2);
+        
+        // Büyük sayýlar için Eratosthenes Kalburu kullan (çok daha hýzlý)
+        if (maxNumber > useFastAlgorithmThreshold)
         {
-            if (targetListBox.InvokeRequired)
+            try
             {
-                targetListBox.Invoke(() => targetListBox.Items.Add(prime));
+                primes = PrimeCalculator.Logic.PrimeCalculator.GetPrimesUpToFast(maxNumber);
+                
+                // Sonuçlarý batch halinde ekle
+                for (int i = 0; i < primes.Count; i += batchSize)
+                {
+                    if (cancelFlag) break;
+                    
+                    int remaining = Math.Min(batchSize, primes.Count - i);
+                    var batch = primes.GetRange(i, remaining);
+                    
+                    targetListBox.Invoke(() =>
+                    {
+                        targetListBox.BeginUpdate();
+                        foreach (var prime in batch)
+                        {
+                            targetListBox.Items.Add(prime);
+                        }
+                        targetListBox.EndUpdate();
+                    });
+                    
+                    // UI'ýn nefes almasýný saðla
+                    Thread.Sleep(1);
+                }
             }
-            else
+            catch (OutOfMemoryException)
             {
-                targetListBox.Items.Add(prime);
+                targetListBox.Invoke(() =>
+                {
+                    MessageBox.Show($"Number too large! Try a smaller value (below {int.MaxValue / 100}).", 
+                        "Memory Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                });
             }
-        }
-
-        if (targetButton.InvokeRequired)
-        {
-            targetButton.Invoke(() => targetButton.Enabled = true);
         }
         else
         {
-            targetButton.Enabled = true;
+            // Küçük sayýlar için normal algoritma
+            for (int i = 2; i <= maxNumber; i++)
+            {
+                if (cancelFlag) break;
+                
+                if (PrimeCalculator.Logic.PrimeCalculator.IsPrime(i))
+                {
+                    primes.Add(i);
+                    
+                    // Batch size'a ulaþtýðýnda UI'ý güncelle
+                    if (primes.Count % batchSize == 0)
+                    {
+                        var currentBatch = primes.GetRange(primes.Count - batchSize, batchSize);
+                        targetListBox.Invoke(() =>
+                        {
+                            targetListBox.BeginUpdate();
+                            foreach (var prime in currentBatch)
+                            {
+                                targetListBox.Items.Add(prime);
+                            }
+                            targetListBox.EndUpdate();
+                        });
+                    }
+                }
+            }
+            
+            // Kalan sonuçlarý ekle
+            if (!cancelFlag)
+            {
+                int remainingCount = primes.Count % batchSize;
+                if (remainingCount > 0)
+                {
+                    var lastBatch = primes.GetRange(primes.Count - remainingCount, remainingCount);
+                    targetListBox.Invoke(() =>
+                    {
+                        targetListBox.BeginUpdate();
+                        foreach (var prime in lastBatch)
+                        {
+                            targetListBox.Items.Add(prime);
+                        }
+                        targetListBox.EndUpdate();
+                    });
+                }
+            }
         }
+
+        bool wasCancelled = cancelFlag;
+        int totalCount = primes.Count;
+        targetButton.Invoke(() => 
+        {
+            targetButton.Enabled = true;
+            if (wasCancelled)
+            {
+                targetListBox.Items.Add("--- CANCELLED ---");
+            }
+            else
+            {
+                targetListBox.Items.Add($"--- TOTAL: {totalCount} primes found ---");
+            }
+        });
     }
 }
