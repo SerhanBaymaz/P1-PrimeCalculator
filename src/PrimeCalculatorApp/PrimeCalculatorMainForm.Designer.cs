@@ -1,6 +1,6 @@
-﻿namespace PrimeCalculatorApp;
+namespace PrimeCalculatorApp;
 
-partial class Form1
+partial class PrimeCalculatorMainForm
 {
     private System.ComponentModel.IContainer components = null;
 
@@ -35,14 +35,14 @@ partial class Form1
         primeCalculatorPanel2.Size = new Size(360, 430);
         primeCalculatorPanel2.TabIndex = 1;
         // 
-        // Form1
+        // PrimeCalculatorMainForm
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(764, 461);
         Controls.Add(primeCalculatorPanel2);
         Controls.Add(primeCalculatorPanel1);
-        Name = "Form1";
+        Name = "PrimeCalculatorMainForm";
         Text = "Prime Calculator - Multithreaded";
         ResumeLayout(false);
     }
@@ -52,4 +52,3 @@ partial class Form1
     private PrimeCalculatorPanel primeCalculatorPanel1;
     private PrimeCalculatorPanel primeCalculatorPanel2;
 }
-

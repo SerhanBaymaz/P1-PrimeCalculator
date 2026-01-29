@@ -34,27 +34,27 @@ public class PrimeCalculator
     }
 
     /// <summary>
-    /// Eratosthenes Kalburu algoritmasý - Büyük sayýlar için çok daha hýzlý
+    /// Sieve of Eratosthenes algorithm - Much faster for large numbers
     /// </summary>
     public static List<int> GetPrimesUpToFast(int maxNumber)
     {
         if (maxNumber < 2)
             return new List<int>();
 
-        // Boolean array oluþtur (true = asal olabilir)
+        // Create a boolean array (true = possibly prime)
         bool[] isPrime = new bool[maxNumber + 1];
         for (int i = 2; i <= maxNumber; i++)
         {
             isPrime[i] = true;
         }
 
-        // Eratosthenes Kalburu
+        // Sieve of Eratosthenes
         int boundary = (int)Math.Sqrt(maxNumber);
         for (int i = 2; i <= boundary; i++)
         {
             if (isPrime[i])
             {
-                // i'nin katlarýný iþaretle (asal deðil)
+                // Mark multiples of i as not prime
                 for (int j = i * i; j <= maxNumber; j += i)
                 {
                     isPrime[j] = false;
@@ -62,7 +62,7 @@ public class PrimeCalculator
             }
         }
 
-        // Asal sayýlarý ekle
+        // Add prime numbers
         var primes = new List<int>();
         for (int i = 2; i <= maxNumber; i++)
         {
