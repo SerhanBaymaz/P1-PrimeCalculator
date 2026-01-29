@@ -64,7 +64,6 @@ partial class Form1
         button1.TabIndex = 2;
         button1.Text = "Calculate 1";
         button1.UseVisualStyleBackColor = true;
-        button1.Click += button1_Click;
         // 
         // button2
         // 
@@ -74,7 +73,6 @@ partial class Form1
         button2.TabIndex = 3;
         button2.Text = "Calculate 2";
         button2.UseVisualStyleBackColor = true;
-        button2.Click += button2_Click;
         // 
         // buttonCancel1
         // 
@@ -87,7 +85,6 @@ partial class Form1
         buttonCancel1.TabIndex = 8;
         buttonCancel1.Text = "✖";
         buttonCancel1.UseVisualStyleBackColor = false;
-        buttonCancel1.Click += buttonCancel1_Click;
         // 
         // buttonCancel2
         // 
@@ -100,33 +97,28 @@ partial class Form1
         buttonCancel2.TabIndex = 9;
         buttonCancel2.Text = "✖";
         buttonCancel2.UseVisualStyleBackColor = false;
-        buttonCancel2.Click += buttonCancel2_Click;
         // 
         // buttonClean1
         // 
         buttonClean1.BackColor = Color.LightSkyBlue;
-        buttonClean1.Enabled = true;
+        buttonClean1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
         buttonClean1.Location = new Point(345, 39);
         buttonClean1.Name = "buttonClean1";
         buttonClean1.Size = new Size(30, 30);
         buttonClean1.TabIndex = 10;
         buttonClean1.Text = "🗑";
-        buttonClean1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
         buttonClean1.UseVisualStyleBackColor = false;
-        buttonClean1.Click += buttonClean1_Click;
         // 
         // buttonClean2
         // 
         buttonClean2.BackColor = Color.LightSkyBlue;
-        buttonClean2.Enabled = true;
+        buttonClean2.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
         buttonClean2.Location = new Point(735, 39);
         buttonClean2.Name = "buttonClean2";
         buttonClean2.Size = new Size(30, 30);
         buttonClean2.TabIndex = 11;
         buttonClean2.Text = "🗑";
-        buttonClean2.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
         buttonClean2.UseVisualStyleBackColor = false;
-        buttonClean2.Click += buttonClean2_Click;
         // 
         // listBox1
         // 
@@ -136,6 +128,7 @@ partial class Form1
         listBox1.Name = "listBox1";
         listBox1.Size = new Size(270, 349);
         listBox1.TabIndex = 4;
+        listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
         // 
         // listBox2
         // 
