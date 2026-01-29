@@ -11,6 +11,7 @@ public partial class PrimeCalculatorPanel : UserControl
 
     private const int BatchSize = 100;
     private const int FastAlgorithmThreshold = 10000;
+    private const int MaxAllowedNumber = 10000000; // 10 million - reasonable limit for performance and memory
 
     public PrimeCalculatorPanel()
     {
@@ -57,6 +58,13 @@ public partial class PrimeCalculatorPanel : UserControl
         if (!int.TryParse(inputTextBox.Text, out maxNumber) || maxNumber < 2)
         {
             MessageBox.Show("Please enter a valid number (2 or greater).", "Invalid Input",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return false;
+        }
+
+        if (maxNumber > MaxAllowedNumber)
+        {
+            MessageBox.Show($"Number too large! Maximum allowed value is {MaxAllowedNumber:N0}.", "Invalid Input",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return false;
         }
