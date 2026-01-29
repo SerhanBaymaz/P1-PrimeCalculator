@@ -32,6 +32,10 @@ partial class Form1
         textBox2 = new TextBox();
         button1 = new Button();
         button2 = new Button();
+        buttonCancel1 = new Button();
+        buttonCancel2 = new Button();
+        buttonClean1 = new Button();
+        buttonClean2 = new Button();
         listBox1 = new ListBox();
         listBox2 = new ListBox();
         label1 = new Label();
@@ -72,6 +76,58 @@ partial class Form1
         button2.UseVisualStyleBackColor = true;
         button2.Click += button2_Click;
         // 
+        // buttonCancel1
+        // 
+        buttonCancel1.BackColor = Color.Gray;
+        buttonCancel1.Enabled = false;
+        buttonCancel1.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        buttonCancel1.Location = new Point(310, 39);
+        buttonCancel1.Name = "buttonCancel1";
+        buttonCancel1.Size = new Size(30, 30);
+        buttonCancel1.TabIndex = 8;
+        buttonCancel1.Text = "✖";
+        buttonCancel1.UseVisualStyleBackColor = false;
+        buttonCancel1.Click += buttonCancel1_Click;
+        // 
+        // buttonCancel2
+        // 
+        buttonCancel2.BackColor = Color.Gray;
+        buttonCancel2.Enabled = false;
+        buttonCancel2.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+        buttonCancel2.Location = new Point(700, 39);
+        buttonCancel2.Name = "buttonCancel2";
+        buttonCancel2.Size = new Size(30, 30);
+        buttonCancel2.TabIndex = 9;
+        buttonCancel2.Text = "✖";
+        buttonCancel2.UseVisualStyleBackColor = false;
+        buttonCancel2.Click += buttonCancel2_Click;
+        // 
+        // buttonClean1
+        // 
+        buttonClean1.BackColor = Color.LightSkyBlue;
+        buttonClean1.Enabled = true;
+        buttonClean1.Location = new Point(345, 39);
+        buttonClean1.Name = "buttonClean1";
+        buttonClean1.Size = new Size(30, 30);
+        buttonClean1.TabIndex = 10;
+        buttonClean1.Text = "🗑";
+        buttonClean1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+        buttonClean1.UseVisualStyleBackColor = false;
+        buttonClean1.Click += buttonClean1_Click;
+        // 
+        // buttonClean2
+        // 
+        buttonClean2.BackColor = Color.LightSkyBlue;
+        buttonClean2.Enabled = true;
+        buttonClean2.Location = new Point(735, 39);
+        buttonClean2.Name = "buttonClean2";
+        buttonClean2.Size = new Size(30, 30);
+        buttonClean2.TabIndex = 11;
+        buttonClean2.Text = "🗑";
+        buttonClean2.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+        buttonClean2.UseVisualStyleBackColor = false;
+        buttonClean2.Click += buttonClean2_Click;
+        // 
         // listBox1
         // 
         listBox1.FormattingEnabled = true;
@@ -95,7 +151,7 @@ partial class Form1
         label1.AutoSize = true;
         label1.Location = new Point(30, 17);
         label1.Name = "label1";
-        label1.Size = new Size(109, 15);
+        label1.Size = new Size(91, 15);
         label1.TabIndex = 6;
         label1.Text = "Enter a number:";
         // 
@@ -104,14 +160,19 @@ partial class Form1
         label2.AutoSize = true;
         label2.Location = new Point(420, 17);
         label2.Name = "label2";
-        label2.Size = new Size(109, 15);
+        label2.Size = new Size(91, 15);
         label2.TabIndex = 7;
         label2.Text = "Enter a number:";
         // 
         // Form1
         // 
+        AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(720, 450);
+        ClientSize = new Size(820, 450);
+        Controls.Add(buttonClean2);
+        Controls.Add(buttonClean1);
+        Controls.Add(buttonCancel2);
+        Controls.Add(buttonCancel1);
         Controls.Add(label2);
         Controls.Add(label1);
         Controls.Add(listBox2);
@@ -121,7 +182,8 @@ partial class Form1
         Controls.Add(textBox2);
         Controls.Add(textBox1);
         Name = "Form1";
-        Text = "Prime Calculator";
+        Text = "Prime Calculator - Multithreaded";
+        Load += Form1_Load;
         ResumeLayout(false);
         PerformLayout();
     }
@@ -132,6 +194,10 @@ partial class Form1
     private TextBox textBox2;
     private Button button1;
     private Button button2;
+    private Button buttonCancel1;
+    private Button buttonCancel2;
+    private Button buttonClean1;
+    private Button buttonClean2;
     private ListBox listBox1;
     private ListBox listBox2;
     private Label label1;
