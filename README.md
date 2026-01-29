@@ -1,38 +1,42 @@
 # Prime Number Calculator - Windows Forms Application
 
+![Demo Video](https://github.com/SerhanBaymaz/P1-PrimeCalculator/raw/master/project1-prime-calculator.mp4)
+
 A multi-threaded Windows Forms desktop application built with C# .NET 8 that calculates prime numbers concurrently without blocking the UI.
 
-## ?? Problem Statement
+## 📋 Problem Statement
 
 Create a Windows Forms application with two independent calculation panels that can:
+
 - Accept user input for maximum number
 - Calculate all prime numbers up to the entered number
 - Run calculations in **separate threads** (not Tasks)
 - Display results in real-time without blocking the UI
 - Execute both calculations simultaneously
 
-## ??? Solution Architecture
+## 🏗️ Solution Architecture
 
 ### Clean Separation of Concerns
 
-```
+```text
 PrimeCalculator/
-??? src/
-?   ??? PrimeCalculator.Logic/       # Core business logic
-?   ?   ??? PrimeCalculator.cs       # Prime calculation algorithms
-?   ??? PrimeCalculatorApp/          # UI layer
-?       ??? PrimeCalculatorPanel.cs  # Reusable calculation control
-?       ??? PrimeCalculatorMainForm.cs
-??? tests/
-    ??? PrimeCalculatorTests/        # Unit tests
+└─── src/
+    ├─── PrimeCalculator.Logic/       # Core business logic
+    │   └─── PrimeCalculator.cs       # Prime calculation algorithms
+    └─── PrimeCalculatorApp/          # UI layer
+        ├─── PrimeCalculatorPanel.cs  # Reusable calculation control
+        └─── PrimeCalculatorMainForm.cs
+tests/
+    └─── PrimeCalculatorTests/        # Unit tests
 ```
 
 **Key Design Principles:**
+
 - **DRY (Don't Repeat Yourself):** Reusable `PrimeCalculatorPanel` UserControl eliminates code duplication
 - **Single Responsibility:** Logic layer handles algorithms; UI layer handles presentation
 - **Encapsulation:** Each panel manages its own thread lifecycle independently
 
-## ?? Threading Implementation
+## 🧵 Threading Implementation
 
 ### Core Threading Features
 
@@ -42,6 +46,7 @@ PrimeCalculator/
    - Independent thread per calculation panel
 
 2. **Thread-Safe UI Updates**
+
    ```csharp
    resultListBox.Invoke(() =>
    {
@@ -74,7 +79,7 @@ _calculationThread.Start();
 _cancelRequested = true;  // Volatile field for thread safety
 ```
 
-## ?? Performance Optimizations
+## ⚡ Performance Optimizations
 
 ### Dual Algorithm Strategy
 
@@ -100,9 +105,10 @@ if (primes.Count % BatchSize == 0)
 }
 ```
 
-## ?? Clean Code Practices
+## ✨ Clean Code Practices
 
 ### 1. **Meaningful Method Names**
+
 ```csharp
 ValidateInput()
 StartCalculation()
@@ -111,11 +117,13 @@ CalculateWithFastAlgorithm()
 ```
 
 ### 2. **DRY Principle**
+
 - Single `PrimeCalculatorPanel` UserControl reused twice
 - Shared calculation logic in `PrimeCalculator.Logic` namespace
 - Centralized UI state management methods
 
 ### 3. **Input Validation**
+
 ```csharp
 // Validates input is a number >= 2
 if (!int.TryParse(input, out maxNumber) || maxNumber < 2)
@@ -131,6 +139,7 @@ if (maxNumber > MaxAllowedNumber)
 ```
 
 ### 4. **Error Handling**
+
 ```csharp
 try
 {
@@ -143,6 +152,7 @@ catch (OutOfMemoryException)
 ```
 
 ### 5. **Constants for Magic Numbers**
+
 ```csharp
 private const int BatchSize = 100;
 private const int FastAlgorithmThreshold = 10000;
@@ -150,11 +160,12 @@ private const int MaxAllowedNumber = 10000000; // 10 million limit
 ```
 
 ### 6. **Small, Focused Methods**
+
 - Each method has a single responsibility
 - Average method length: 5-15 lines
 - Easy to read, test, and maintain
 
-## ?? Technical Stack
+## 🛠️ Technical Stack
 
 - **Framework:** .NET 8
 - **UI:** Windows Forms
@@ -162,17 +173,18 @@ private const int MaxAllowedNumber = 10000000; // 10 million limit
 - **Architecture:** Multi-layered (Logic + UI)
 - **Testing:** xUnit (optional)
 
-## ?? Key Takeaways
+## 💡 Key Takeaways
 
-? **Thread Safety:** Proper use of `Invoke()` for cross-thread UI updates  
-? **Concurrency:** Multiple calculations run simultaneously without conflicts  
-? **Responsiveness:** UI remains interactive during heavy computations  
-? **Maintainability:** Clean separation enables easy testing and extension  
-? **Performance:** Intelligent algorithm selection based on input size  
+• **Thread Safety:** Proper use of `Invoke()` for cross-thread UI updates
+• **Concurrency:** Multiple calculations run simultaneously without conflicts
+• **Responsiveness:** UI remains interactive during heavy computations
+• **Maintainability:** Clean separation enables easy testing and extension
+• **Performance:** Intelligent algorithm selection based on input size  
 
-## ?? Learning Highlights
+## 📚 Learning Highlights
 
 This project demonstrates:
+
 - Manual thread management and lifecycle control
 - Cross-thread communication in Windows Forms
 - Volatile fields for thread synchronization
