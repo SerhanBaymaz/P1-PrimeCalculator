@@ -1,44 +1,28 @@
 namespace PrimeCalculatorApp;
 
 /// <summary>
-/// Encapsulates the logic and UI controls for a single prime calculator panel.
-/// This class follows the Single Responsibility Principle by managing only one calculator instance.
+/// A self-contained user control for calculating prime numbers.
+/// Encapsulates all UI elements and calculation logic.
 /// </summary>
-public class CalculatorPanel
+public partial class PrimeCalculatorPanel : UserControl
 {
-    private readonly TextBox _inputTextBox;
-    private readonly ListBox _resultListBox;
-    private readonly Button _calculateButton;
-    private readonly Button _cancelButton;
-    private readonly Button _cleanButton;
-
     private Thread? _calculationThread;
     private volatile bool _cancelRequested;
 
     private const int BatchSize = 100;
     private const int FastAlgorithmThreshold = 10000;
 
-    public CalculatorPanel(
-        TextBox inputTextBox,
-        ListBox resultListBox,
-        Button calculateButton,
-        Button cancelButton,
-        Button cleanButton)
+    public PrimeCalculatorPanel()
     {
-        _inputTextBox = inputTextBox ?? throw new ArgumentNullException(nameof(inputTextBox));
-        _resultListBox = resultListBox ?? throw new ArgumentNullException(nameof(resultListBox));
-        _calculateButton = calculateButton ?? throw new ArgumentNullException(nameof(calculateButton));
-        _cancelButton = cancelButton ?? throw new ArgumentNullException(nameof(cancelButton));
-        _cleanButton = cleanButton ?? throw new ArgumentNullException(nameof(cleanButton));
-
+        InitializeComponent();
         AttachEventHandlers();
     }
 
     private void AttachEventHandlers()
     {
-        _calculateButton.Click += OnCalculateClick;
-        _cancelButton.Click += OnCancelClick;
-        _cleanButton.Click += OnCleanClick;
+        calculateButton.Click += OnCalculateClick;
+        cancelButton.Click += OnCancelClick;
+        cleanButton.Click += OnCleanClick;
     }
 
     private void OnCalculateClick(object? sender, EventArgs e)
@@ -65,12 +49,12 @@ public class CalculatorPanel
             return;
         }
 
-        _resultListBox.Items.Clear();
+        resultListBox.Items.Clear();
     }
 
     private bool ValidateInput(out int maxNumber)
     {
-        if (!int.TryParse(_inputTextBox.Text, out maxNumber) || maxNumber < 2)
+        if (!int.TryParse(inputTextBox.Text, out maxNumber) || maxNumber < 2)
         {
             MessageBox.Show("Please enter a valid number (2 or greater).", "Invalid Input",
                 MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -82,7 +66,7 @@ public class CalculatorPanel
 
     private void StartCalculation(int maxNumber)
     {
-        _resultListBox.Items.Clear();
+        resultListBox.Items.Clear();
         SetUIState(isCalculating: true);
         _cancelRequested = false;
 
@@ -106,21 +90,21 @@ public class CalculatorPanel
 
     private void SetUIState(bool isCalculating)
     {
-        _calculateButton.Enabled = !isCalculating;
+        calculateButton.Enabled = !isCalculating;
         SetCancelButtonState(enabled: isCalculating);
         SetCleanButtonState(enabled: !isCalculating);
     }
 
     private void SetCancelButtonState(bool enabled)
     {
-        _cancelButton.Enabled = enabled;
-        _cancelButton.BackColor = enabled ? Color.IndianRed : Color.Gray;
+        cancelButton.Enabled = enabled;
+        cancelButton.BackColor = enabled ? Color.IndianRed : Color.Gray;
     }
 
     private void SetCleanButtonState(bool enabled)
     {
-        _cleanButton.Enabled = enabled;
-        _cleanButton.BackColor = enabled ? Color.LightSkyBlue : Color.Gray;
+        cleanButton.Enabled = enabled;
+        cleanButton.BackColor = enabled ? Color.LightSkyBlue : Color.Gray;
     }
 
     private void CalculatePrimes(int maxNumber)
@@ -137,30 +121,19 @@ public class CalculatorPanel
             {
                 CalculateWithStandardAlgorithm(maxNumber, primes);
             }
+
+            DisplayResults(primes);
         }
         catch (OutOfMemoryException)
         {
             HandleMemoryError();
-            return;
         }
-
-        DisplayResults(primes);
     }
 
     private void CalculateWithFastAlgorithm(int maxNumber, List<int> primes)
     {
         primes.AddRange(PrimeCalculator.Logic.PrimeCalculator.GetPrimesUpToFast(maxNumber));
-
-        for (int i = 0; i < primes.Count; i += BatchSize)
-        {
-            if (_cancelRequested) break;
-
-            int remaining = Math.Min(BatchSize, primes.Count - i);
-            var batch = primes.GetRange(i, remaining);
-
-            AddPrimesToListBox(batch);
-            Thread.Sleep(1);
-        }
+        DisplayPrimesInBatches(primes);
     }
 
     private void CalculateWithStandardAlgorithm(int maxNumber, List<int> primes)
@@ -187,6 +160,20 @@ public class CalculatorPanel
         }
     }
 
+    private void DisplayPrimesInBatches(List<int> primes)
+    {
+        for (int i = 0; i < primes.Count; i += BatchSize)
+        {
+            if (_cancelRequested) break;
+
+            int remaining = Math.Min(BatchSize, primes.Count - i);
+            var batch = primes.GetRange(i, remaining);
+
+            AddPrimesToListBox(batch);
+            Thread.Sleep(1);
+        }
+    }
+
     private void AddRemainingPrimes(List<int> primes)
     {
         int remainingCount = primes.Count % BatchSize;
@@ -199,20 +186,20 @@ public class CalculatorPanel
 
     private void AddPrimesToListBox(List<int> batch)
     {
-        _resultListBox.Invoke(() =>
+        resultListBox.Invoke(() =>
         {
-            _resultListBox.BeginUpdate();
+            resultListBox.BeginUpdate();
             foreach (var prime in batch)
             {
-                _resultListBox.Items.Add(prime);
+                resultListBox.Items.Add(prime);
             }
-            _resultListBox.EndUpdate();
+            resultListBox.EndUpdate();
         });
     }
 
     private void HandleMemoryError()
     {
-        _resultListBox.Invoke(() =>
+        resultListBox.Invoke(() =>
         {
             MessageBox.Show($"Number too large! Try a smaller value (below {int.MaxValue / 100}).",
                 "Memory Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -224,17 +211,17 @@ public class CalculatorPanel
         bool wasCancelled = _cancelRequested;
         int totalCount = primes.Count;
 
-        _resultListBox.Invoke(() =>
+        resultListBox.Invoke(() =>
         {
             SetUIState(isCalculating: false);
 
             if (wasCancelled)
             {
-                _resultListBox.Items.Add("--- CANCELLED ---");
+                resultListBox.Items.Add("--- CANCELLED ---");
             }
             else
             {
-                _resultListBox.Items.Add($"--- TOTAL: {totalCount} primes found ---");
+                resultListBox.Items.Add($"--- TOTAL: {totalCount} primes found ---");
             }
         });
     }
