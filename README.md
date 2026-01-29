@@ -1,6 +1,8 @@
 # Prime Number Calculator - Windows Forms Application
 
-![Demo Video](https://github.com/user-attachments/assets/aec7413a-77f3-4d1e-92fd-a5286f78b571)
+<summary>📺 Demo Video</summary>
+
+[project1-prime-calculator.webm](https://github.com/user-attachments/assets/4c7526de-e8c9-4ae6-a091-479b07a72c8b)
 
 A multi-threaded Windows Forms desktop application built with C# .NET 8 that calculates prime numbers concurrently without blocking the UI.
 
